@@ -24,7 +24,9 @@ public class MenuManager : MonoBehaviour
 
     public void NewGameLoad()
     {
+        
         SceneManager.LoadScene(newGameScene);
+        DataPersistManager.instance.NewGame(); // Creating a GameData object
     }
 
     // Space for a Load Game function
