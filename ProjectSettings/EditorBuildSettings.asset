@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LairDungeon.unity
     guid: 64f8f6ce4e8cf3b4d8d2fd12a7e6f632
+  - enabled: 1
+    path: Assets/Scenes/LairCombatDDSSJJK.unity
+    guid: 97bf241e3f0e7874a9da9c8371398380
   m_configObjects: {}
