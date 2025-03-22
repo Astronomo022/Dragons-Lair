@@ -22,4 +22,15 @@ public class Fighter : MonoBehaviour
             return false; 
     }
 
+    public int Heal()
+    {
+        currentHp += (int)(maxHp*0.22);
+
+        if(currentHp > maxHp)
+        {
+            currentHp = maxHp;
+        }
+        return currentHp;
+    }
+
 }

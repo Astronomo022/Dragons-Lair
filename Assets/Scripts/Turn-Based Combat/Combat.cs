@@ -290,6 +290,21 @@ public class CombatRun : MonoBehaviour
 
     }
 
+    public void Heal()
+    {
+        StartCoroutine(HealPlayer());
+    }
+
+    IEnumerator HealPlayer()
+    {
+        int health = playerCombatant.Heal();
+        playerCombatant.currentHp = health;
+        knightHUD.SetHP(playerCombatant.currentHp,playerCombatant.maxHp);
+        dialogueText.text = " You call upon the blessing of the goddess, Restoring some of your health!";
+        yield return new WaitForSeconds(1);
+        PlayerTurn();
+    }
+
     void EndBattle()
     {
         // Checks your state at the end of battle.
