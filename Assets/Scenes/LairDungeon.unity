@@ -5715,10 +5715,18 @@ PrefabInstance:
       propertyPath: m_Offset.y
       value: 0.2458053
       objectReference: {fileID: 0}
+    - target: {fileID: 7095204529996235472, guid: 0b50844b3b5cc3149a056667b4d25c30, type: 3}
+      propertyPath: Scene2Load
+      value: LairCombat5
+      objectReference: {fileID: 0}
     - target: {fileID: 8345662508741197795, guid: 0b50844b3b5cc3149a056667b4d25c30, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 2030412505, guid: 6033b99dafe6afe498dbaaa61d186e14, type: 3}
+    - target: {fileID: 8605302315130196921, guid: 0b50844b3b5cc3149a056667b4d25c30, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8737178940100064398, guid: 0b50844b3b5cc3149a056667b4d25c30, type: 3}
       propertyPath: m_Name
       value: BigBat
@@ -18094,7 +18102,7 @@ Transform:
   m_GameObject: {fileID: 1925341248}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.0239005, y: 14.98833, z: -10}
+  m_LocalPosition: {x: -1.0278697, y: 14.988345, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

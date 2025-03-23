@@ -33,7 +33,12 @@ public class CombatRun : MonoBehaviour
     void Start()
     {
         state = CombatState.START;
+        if(foe2 != null && foe3 != null)
+        {
         StartCoroutine(SetMatch());
+        } else {
+            StartCoroutine(SetBossMatch());
+        }
     }
 
     // The meat and potatoes of the machine. It sets up the scene with each fighter, each position, each hud. 
@@ -51,7 +56,7 @@ public class CombatRun : MonoBehaviour
 
         GameObject foe3GO = Instantiate(foe3, foePos3);
         enemyCombatant3 = foe3GO.GetComponent<Fighter>();
-
+        
         // Sets the dialogue text to this output
         dialogueText.text = "Ambushed by a " + enemyCombatant1.fightName + " and their goons, " + enemyCombatant2.fightName + " and " + enemyCombatant3.fightName + "!";
 
@@ -72,6 +77,28 @@ public class CombatRun : MonoBehaviour
 
 
     }
+    IEnumerator SetBossMatch()
+    {
+        GameObject playerGO = Instantiate(player);
+        playerCombatant = playerGO.GetComponent<Fighter>();
+
+        GameObject foe1GO = Instantiate(foe1, foePos1);
+        enemyCombatant1 = foe1GO.GetComponent<Fighter>();
+
+        // Sets the dialogue text to this output
+        dialogueText.text = "The goddess has empowered you! Surrounding you in rays of light! Your stats are temporarily raised!";
+
+        // This sends the Fighter type unit to BattleHud to read into the UI, once again, done in blocks.
+        knightHUD.SetPlayerHud(playerCombatant);
+        enemyHUD1.SetEnemyHud(enemyCombatant1);
+
+        yield return new WaitForSeconds(2);
+
+        state = CombatState.PLAYERTURN;
+        PlayerTurn();
+
+
+    }
 
     void PlayerTurn()
     {
@@ -82,6 +109,9 @@ public class CombatRun : MonoBehaviour
         }
         else
         dialogueText.text = "What are you going to do?(Choose on the left)";
+        
+
+        
     }
 
 
@@ -89,6 +119,10 @@ public class CombatRun : MonoBehaviour
 (Whoever decides to work on this in the future, probably me again but still, READ.)*/
 // Duplicated AttackFoe1Button so that each targetting option can be accurate. 
 
+    public void AttackDragonButton()
+    {
+        StartCoroutine(PlayerAttacksDragon());
+    }
     public void AttackFoe1Button()
     {
         // checking to make sure player only attacks when its their turn
@@ -137,18 +171,46 @@ public class CombatRun : MonoBehaviour
         PlayerTurn();
     }
 
+    IEnumerator PlayerAttacksDragon()
+    {
+        Foe1isDead = enemyCombatant1.TakeDamage(playerCombatant.damage); // take damage and check if they're dead
+        enemyHUD1.SetHP(enemyCombatant1.currentHp, enemyCombatant1.maxHp); // set enemy hp in UI
+        dialogueText.text = "You ready your sword, and with the Goddess of Light's help, attack "+enemyCombatant1.fightName+"!";
+        yield return new WaitForSeconds(1);
+
+        // checks if enemy is dead
+        if(Foe1isDead)
+        {
+            dialogueText.text = enemyCombatant1.fightName + " The dragon roars defiantly, until the strength left in its body escapes them! The dragon is vanquished! ";
+            yield return new WaitForSeconds(3);
+            foe1.SetActive(false); // makes the foe that died disappear
+            foePos1.gameObject.SetActive(false); // Put here since we run into the issue where for some reason sometimes prefabs dont disappear
+            enemyHUD1.gameObject.SetActive(false); // also hiding hud but can still be selected. Shouldn't break the game, however. 
+            state = CombatState.WON;
+            EndBossBattle();
+
+        }
+        else 
+        {
+            state = CombatState.ENEMYTURN;
+            StartCoroutine(DragonTurn());
+        }
+
+    }
+
+
     IEnumerator PlayerFoe1Attack()
     {
         Foe1isDead = enemyCombatant1.TakeDamage(playerCombatant.damage); // take damage and check if they're dead
         enemyHUD1.SetHP(enemyCombatant1.currentHp, enemyCombatant1.maxHp); // set enemy hp in UI
-        dialogueText.text = "You attack " + enemyCombatant1 + "!";
+        dialogueText.text = "You attack " + enemyCombatant1.fightName + "!";
         yield return new WaitForSeconds(1); 
         Debug.Log("Successful.");
 
         // checks if enemy is dead
         if(Foe1isDead)
         {
-            dialogueText.text = enemyCombatant1 + " Perishes with a final strike! You take this surge of energy to go again!";
+            dialogueText.text = enemyCombatant1.fightName + " Perishes with a final strike! You take this surge of energy to go again!";
             yield return new WaitForSeconds(1);
             foe1.SetActive(false); // makes the foe that died disappear
             foePos1.gameObject.SetActive(false); // Put here since we run into the issue where for some reason sometimes prefabs dont disappear
@@ -169,14 +231,14 @@ public class CombatRun : MonoBehaviour
     {
         Foe2isDead = enemyCombatant2.TakeDamage(playerCombatant.damage); // take damage and check if they're dead
         enemyHUD2.SetHP(enemyCombatant2.currentHp, enemyCombatant2.maxHp); // set enemy hp in UI
-        dialogueText.text = "You attack " + enemyCombatant2 + "!";
+        dialogueText.text = "You attack " + enemyCombatant2.fightName + "!";
         yield return new WaitForSeconds(1); 
         Debug.Log("Successful.");
 
         // checks if enemy is dead
         if(Foe2isDead)
         {
-            dialogueText.text = enemyCombatant2 + " Perishes with a final strike! You take this surge of energy to go again!";
+            dialogueText.text = enemyCombatant2.fightName + " Perishes with a final strike! You take this surge of energy to go again!";
             yield return new WaitForSeconds(1);
             foe2.SetActive(false); // makes the foe that died disappear
             foePos2.gameObject.SetActive(false); // Put here since we run into the issue where for some reason sometimes prefabs dont disappear
@@ -197,14 +259,14 @@ public class CombatRun : MonoBehaviour
     {
         Foe3isDead = enemyCombatant3.TakeDamage(playerCombatant.damage); // take damage and check if they're dead
         enemyHUD3.SetHP(enemyCombatant3.currentHp, enemyCombatant3.maxHp); // set enemy hp in UI
-        dialogueText.text = "You attack " + enemyCombatant3 + "!";
+        dialogueText.text = "You attack " + enemyCombatant3.fightName + "!";
         yield return new WaitForSeconds(1); 
         Debug.Log("Successful.");
 
         // checks if enemy is dead
         if(Foe3isDead)
         {
-            dialogueText.text = enemyCombatant3 + " Perishes with a final strike! You take this surge of energy to go again!";
+            dialogueText.text = enemyCombatant3.fightName + " Perishes with a final strike! You take this surge of energy to go again!";
             yield return new WaitForSeconds(1);
             foe3.SetActive(false); // makes the foe that died disappear
             foePos3.gameObject.SetActive(false); // Put here since we run into the issue where for some reason sometimes prefabs dont disappear
@@ -224,7 +286,7 @@ public class CombatRun : MonoBehaviour
 
     IEnumerator EnemyTurn() // This is making think that I should've made this an array but perhaps for another time
     {
-        if(Foe1isDead == true && Foe2isDead == true && Foe3isDead == true)
+        if(Foe1isDead == true && Foe2isDead == true && Foe3isDead == true) // I know its redundant but this is to be clear
         {
             state = CombatState.WON;
             EndBattle();
@@ -290,6 +352,31 @@ public class CombatRun : MonoBehaviour
 
     }
 
+    IEnumerator DragonTurn()
+    {
+        dialogueText.text = enemyCombatant1.fightName +" Makes a ferocious, world rending attack!";
+
+        yield return new WaitForSeconds(2);
+
+        // boss attacks you once
+        PlayerisDead = playerCombatant.TakeDamage(enemyCombatant1.damage);
+
+        knightHUD.SetHP(playerCombatant.currentHp, playerCombatant.maxHp);
+
+        if(PlayerisDead)
+            {
+                state = CombatState.LOST;
+                EndBossBattle();
+            }
+            else
+            {
+                state = CombatState.PLAYERTURN;
+                PlayerTurn();
+            }
+
+
+    }
+
     public void Heal()
     {
         StartCoroutine(HealPlayer());
@@ -320,10 +407,33 @@ public class CombatRun : MonoBehaviour
         }
     }
 
+    void EndBossBattle()
+    {
+        // Checks your state at the end of battle.
+        if(state == CombatState.WON) 
+        {
+            dialogueText.text = "The dragon is defeated! You won!";
+            StartCoroutine(HappyEnd());
+        } else if (state == CombatState.LOST)
+
+        {
+            dialogueText.text = "You have succumbed to weakness. This battle is lost.";
+            StartCoroutine(GameOverReturn());
+        }
+    }
+
     IEnumerator OverworldReturn()
     {
         yield return new WaitForSeconds(3);
         SceneManager.LoadScene("LairDungeon");
+    }
+
+    IEnumerator HappyEnd()
+    {
+        yield return new WaitForSeconds(2);
+        dialogueText.text = "Your family is revealed to you, once the dragon perishes. You embrace your family, and look back to the Goddess, who blesses you on your safe journey back.";
+        StartCoroutine(GameOverReturn());
+
     }
 
     IEnumerator GameOverReturn()
